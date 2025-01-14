@@ -1,6 +1,7 @@
 public class Lexical {
-    private static String buffer ;
+    private static String buffer;
     private static int state;
+    private static int row, col, len;
     private static int pointer;
     private static char ch;
 
@@ -15,13 +16,23 @@ public class Lexical {
     private static boolean isDigit() {
         return ch >= '0' && ch <= '9';
     }
-    
+
+    private static void goForward() {
+        getChar();
+        col++;
+        len++;
+    }
+
+    private static void reset() {
+        len = 0;
+        state = 0;
+    }
 
     static void run(String buffer) {
         Lexical.buffer = buffer;
         state = 0;
         pointer = -1;
-        int row = 0, col = 0;
+        row = 0; col = 0;
         int len = 0;
         
         getChar();
@@ -33,68 +44,63 @@ public class Lexical {
                     if (ch == ' ' ) {
                         col++;
                         getChar();
-                        break;
                     } else if (ch == '\t') {
                         col+=4;
                         getChar();
-                        break;
                     } else if (ch == '\n') {
                         row++;
                         col = 0;
                         getChar();
-                        break;
                     } else if (isDigit()) {
-                        getChar();
+                        goForward();
                         state = 3;
                     } else if (isLetter() || ch == '_') {
-                        getChar();
+                        goForward();
                         state = 1;
                     } else if (ch == '/') {
-                        getChar();
+                        goForward();
                         state = 21;
                     } else if (ch == '[' || ch == ']' || ch == '(' || ch == ')'
                             || ch == '{' || ch == '}' || ch == ';' || ch == ','
                             || ch == ':') {
-                        getChar();
+                        goForward();
                         state = 25;           
                     } else if (ch == '"' ) {
-                        // not finished
+                        goForward();
+                        state = 39;
                     } else if (ch == '\'') {
-                        // not finished
+                        state = 35;
                     } else if (ch == '!' || ch == '^' || ch == '%' || ch == '=' || ch == '*') {
-                        getChar();
+                        goForward();
                         state = 26;
                     } else if (ch == '+') {
-                        getChar();
+                        goForward();
                         state = 27;
                     } else if (ch == '-') {
-                        getChar();
+                        goForward();
                         state = 28;
                     } else if (ch == '&') {
-                        getChar();
+                        goForward();
                         state = 31;
                     } else if (ch == '|') {
-                        getChar();
+                        goForward();
                         state = 32;
                     } else if (ch == '<') {
-                        getChar();
+                        goForward();
                         state = 29;
                     } else if (ch == '>') {
-                        getChar();
+                        goForward();
                         state = 30;
                     } else if (ch == '?' || ch == '~') {
-                        getChar();
+                        goForward();
                         state = 33;
                     } else {
                         System.out.println("Error.");
                     }
-
-                    col++;
-                    len++;
                     break;
             
                 case 1:
-                    if ( isLetter() || isDigit() || ch == '_') getChar();
+                    if ( isLetter() || isDigit() || ch == '_') goForward();
                     else state = 2;
                     break;
                 
@@ -104,18 +110,18 @@ public class Lexical {
             
                 case 3:
                     if (isDigit()) {
-                        getChar();
+                        goForward();
                     } else if (ch == '.') {
-                        getChar();
+                        goForward();
                         state = 4;
                     } else if (ch == 'u' || ch == 'U') {
-                        getChar();
+                        goForward();
                         state = 8;
                     } else if (ch == 'L') {
-                        getChar();
+                        goForward();
                         state = 9;
                     }  else if (ch == 'l') {
-                        getChar();
+                        goForward();
                         state = 10;
                     } else {
                         state = 7;
@@ -124,7 +130,7 @@ public class Lexical {
                 
                 case 4:
                     if (isDigit()) {
-                        getChar();
+                        goForward();
                         state = 5;
                     } else System.out.println("Error.");
                     
@@ -132,9 +138,9 @@ public class Lexical {
             
                 case 5:
                     if (isDigit()) {
-                        getChar();
+                        goForward();
                     } else if (ch == 'f' || ch == 'F') {
-                        getChar();
+                        goForward();
                         state = 18;
                     } else state = 6;
                     break;
@@ -149,38 +155,38 @@ public class Lexical {
 
                 case 8:
                     if (ch == 'L') {
-                        getChar();
+                        goForward();
                         state = 11;
                     } else if (ch == 'l') {
-                        getChar();
+                        goForward();
                         state = 12;
                     } else state = 15;
                     break;
 
                 case 9:
                     if (ch == 'L') {
-                        getChar();
+                        goForward();
                         state = 13;
                     } else state = 17;
                     break;
 
                 case 10: 
                     if (ch == 'l') {
-                        getChar();
+                        goForward();
                         state = 13;
                     } else state = 17;
                     break;
 
                 case 11:
                     if (ch == 'L') {
-                        getChar();
+                        goForward();
                         state = 14;
                     } else state = 16;
                     break;
 
                 case 12:
                     if (ch == 'l') {
-                        getChar();
+                        goForward();
                         state = 14;
                     } else state = 16;
                     break;
@@ -207,7 +213,7 @@ public class Lexical {
                 
                 case 18:
                     if (ch == 'l' || ch == 'L') {
-                        getChar();
+                        goForward();
                         state = 20;
                     } else state = 19;
                     break;
@@ -220,9 +226,117 @@ public class Lexical {
                     // Token double
                     break;
                 
+                case 21:
+                    if (ch == '/') {
+                        goForward();
+                        state = 22;
+                    } else if (ch == '*') {
+                        goForward();
+                        state = 23;
+                    } else state = 26;
+                    break;
+
+                case 22:
+                    if (ch == '\n') state = 0;
+                    goForward();
+                    break;
+                
+                case 23:
+                    if (ch == '*') state = 24;
+                    goForward();
+                    break;
+                
+                case 24:
+                    if (ch == '/') state = 0;
+                    else state = 23;
+                    goForward();
+                    break;
+
+                case 25:
+                    // Token delimiter
+                    state = 0;
+                    break;
+
+                case 26:
+                    if (ch == '=') goForward();
+                    state = 33;
+                    break;
+                
+                case 27:
+                    if (ch == '+') {
+                        goForward();
+                        state = 33;
+                    } else state = 26;
+                    break;
+
+                case 28:    
+                    if (ch == '-') {
+                        goForward();
+                        state = 33;
+                    } else state = 26;
+                    break;
+                
+                case 29:
+                    if (ch == '<') goForward();
+                    state = 26;
+                    break;
+                
+                case 30:
+                    if (ch == '>') goForward();
+                    state = 26;
+                    break;
+
+                case 31:
+                    if (ch == '|') goForward();
+                    state = 26;
+                    break;
+                
+                case 32:
+                    if (ch == '&') goForward();
+                    state = 26;
+                    break;
+                
+                case 33:
+                    // Token operator
+                    break;
+
+                case 34:
+                    if (ch == '"') state = 39;
+                    goForward();
+                    break;
+
+                case 35:
+                    if (ch == '\\') state = 36;
+                    else state = 37;
+                    goForward();
+                    break;
+
+                case 36:
+                    if (ch == '\\' || ch == 't' || ch == 'n' || ch == 'r') {
+                        goForward();
+                        state = 38;
+                    } else {
+                        System.out.println("Error.");
+                    }
+                    break;
+
+                case 37:
+                    if (ch == '\'') {
+                        goForward();
+                        state = 39;
+                    } else {
+                        System.out.println("Error.");
+                    }
+                    break;
+
+                case 38:
+                    // Token character
                     
-                    
-                    
+                    break;
+
+                case 39:
+                    // Token String
+                   break; 
                 default:
                     break;
             }
