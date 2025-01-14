@@ -1,9 +1,22 @@
+import java.util.Arrays;
+import java.util.List;
+import java.util.Stack;
+
 public class Lexical {
     private static String buffer;
     private static int state;
     private static int row, col, len;
     private static int pointer;
     private static char ch;
+
+    private static final List<String> KEYWORDS = Arrays.asList(
+        "auto", "double", "int", "struct", "break", "else", "long", "switch",
+        "case", "enum", "register", "typedef", "char", "extern", "return", "union",
+        "const", "float", "short", "unsigned", "continue", "for", "signed", "void",
+        "default", "goto", "sizeof", "volatile", "do", "if", "static", "while"
+    );
+
+    private static Stack<Token> tokens = new Stack<>();
 
     private static void getChar() {
         Lexical.ch = buffer.charAt(++pointer);
@@ -28,12 +41,25 @@ public class Lexical {
         state = 0;
     }
 
-    static void run(String buffer) {
+    private static Token createToken(String type) {
+        return new Token(buffer.substring(pointer - len, pointer), type, row, col - len);
+    }
+
+    private static Token createToken(String type, int dif) {
+        return new Token(buffer.substring(pointer - len, pointer - dif), type, row, col - len);
+    }
+
+    public static boolean isKeyword(String word) {
+        return KEYWORDS.contains(word);
+    }
+
+    public static void run(String buffer) {
         Lexical.buffer = buffer;
         state = 0;
         pointer = -1;
         row = 0; col = 0;
         int len = 0;
+        Token token;
         
         getChar();
 
@@ -105,7 +131,11 @@ public class Lexical {
                     break;
                 
                 case 2:
-                    // Token identifier or keyword
+                    if (isKeyword(buffer.substring(pointer - len, pointer))) {
+                        token = createToken("Keyword");
+                    } else token = createToken("Identifier");
+                    tokens.push(token);
+                    reset();
                     break;
             
                 case 3:
@@ -146,11 +176,15 @@ public class Lexical {
                     break;
 
                 case 6:
-                    // Token double number
+                    token = createToken("Double Number");
+                    tokens.push(token);
+                    reset();
                     break;
 
                 case 7:
-                    // Token integer number
+                    token = createToken("Integer Number");
+                    tokens.push(token);
+                    reset();
                     break;
 
                 case 8:
@@ -170,7 +204,7 @@ public class Lexical {
                     } else state = 17;
                     break;
 
-                case 10: 
+                case 10:
                     if (ch == 'l') {
                         goForward();
                         state = 13;
@@ -192,23 +226,33 @@ public class Lexical {
                     break;
                 
                 case 13:
-                    // Token long long number
+                    token = createToken("Long Long Number", 2);
+                    tokens.push(token);
+                    reset();
                     break;
 
                 case 14:
-                    // Token unsigned long long
+                    token = createToken("Unsigned Long Long Number", 3);
+                    tokens.push(token);
+                    reset();
                     break;
 
                 case 15:
-                    // Token unsigned int
+                    token = createToken("Unsigned Integer Number", 1);
+                    tokens.push(token);
+                    reset();
                     break;
 
                 case 16:
-                    // Token unsigned long
+                    token = createToken("Unsigned Long Number", 2);
+                    tokens.push(token);
+                    reset();
                     break;
 
                 case 17:
-                    // Token long
+                    token = createToken("Long Number", 1);
+                    tokens.push(token);
+                    reset();
                     break;
                 
                 case 18:
@@ -219,11 +263,15 @@ public class Lexical {
                     break;
 
                 case 19:
-                    // Token float
+                    token = createToken("Float Number", 1);
+                    tokens.push(token);
+                    reset();
                     break;
 
                 case 20:
-                    // Token double
+                    token = createToken("Double Number", 2);
+                    tokens.push(token);
+                    reset();
                     break;
                 
                 case 21:
@@ -253,8 +301,9 @@ public class Lexical {
                     break;
 
                 case 25:
-                    // Token delimiter
-                    state = 0;
+                    token = createToken("Delimeter");
+                    tokens.push(token);
+                    reset();
                     break;
 
                 case 26:
@@ -269,13 +318,13 @@ public class Lexical {
                     } else state = 26;
                     break;
 
-                case 28:    
+                case 28:
                     if (ch == '-') {
                         goForward();
                         state = 33;
                     } else state = 26;
                     break;
-                
+    
                 case 29:
                     if (ch == '<') goForward();
                     state = 26;
@@ -297,7 +346,9 @@ public class Lexical {
                     break;
                 
                 case 33:
-                    // Token operator
+                    token = createToken("Operator");
+                    tokens.push(token);
+                    reset();
                     break;
 
                 case 34:
@@ -330,14 +381,18 @@ public class Lexical {
                     break;
 
                 case 38:
-                    // Token character
-                    
+                    token = createToken("Character");
+                    tokens.push(token);
+                    reset();
                     break;
 
                 case 39:
-                    // Token String
+                    token = createToken("String");
+                    tokens.push(token);
+                    reset();
                    break; 
                 default:
+                    System.out.println("Error");
                     break;
             }
         }
