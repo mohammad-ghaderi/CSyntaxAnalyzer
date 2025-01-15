@@ -19,7 +19,8 @@ public class Lexical {
     private static Stack<Token> tokens = new Stack<>();
 
     private static void getChar() {
-        Lexical.ch = buffer.charAt(++pointer);
+        if (++pointer == buffer.length()) return;
+        ch = buffer.charAt(++pointer);
     }
 
     private static boolean isLetter() {
@@ -53,7 +54,7 @@ public class Lexical {
         return KEYWORDS.contains(word);
     }
 
-    public static void run(String buffer) {
+    public static Stack<Token> run(String buffer) {
         Lexical.buffer = buffer;
         state = 0;
         pointer = -1;
@@ -63,7 +64,7 @@ public class Lexical {
         
         getChar();
 
-        while (true) {
+        while (pointer < buffer.length()) {
 
             switch (state) {
                 case 0:
@@ -397,6 +398,7 @@ public class Lexical {
             }
         }
 
+        return tokens;
     }
 
 }
