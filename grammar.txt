@@ -1,0 +1,48 @@
+S' -> S
+S -> type id DECL S
+S -> ''
+DECL -> EXP VAR_REST
+DECL -> ( PARAMS ) CMP_STMT
+DECL -> [ EXP ] VAR_REST
+DECL -> , id VAR_REST 
+VAR_REST -> , id VAR_REST
+VAR_REST -> = EXP VAR_REST
+VAR_REST -> [ EXP ] VAR_REST
+VAR_REST -> ;
+PARAMS -> type id PAR_REST
+PARAMS -> ''
+PAR_REST -> , type id PAR_REST
+PAR_REST -> [ EXP ] PAR_REST
+PAR_REST -> ''
+CMP_STMT -> { STMT_LIST }
+STMT_LIST -> STMT STMT_LIST
+STMT_LIST -> ''
+STMT -> type id DECL
+STMT -> EXP ;
+STMT -> IF_STMT
+STMT -> WHILE_STMT
+STMT -> FOR_STMT
+STMT -> SWITCH_STMT
+STMT -> CMP_STMT
+STMT -> return EXP ;
+STMT -> break ;
+EXP -> id IDEXP
+EXP -> number op2 EXP
+EXP -> op1 EXP
+IDEXP -> op2 EXP
+IDEXP -> ( ARGS )
+IDEXP -> VAR_REST
+ARGS -> EXP ARG_REST
+ARGS -> ''
+ARG_REST -> , EXP ARG_REST
+ARG_REST -> ''
+IF_STMT -> if ( EXP ) STMT ELSE_STMT
+ELSE_STMT -> else STMT
+ELSE_STMT -> ''
+WHILE_STMT -> while ( EXP ) STMT
+FOR_STMT -> for ( EXP ; EXP ; EXP ) STMT
+SWITCH_STMT -> switch ( EXP ) { CASE_LIST DEFA }
+CASE_LIST -> case EXP : STMT CASE_LIST
+CASE-LIST -> ''
+DEFA -> default : STMT
+DEFA -> ''
