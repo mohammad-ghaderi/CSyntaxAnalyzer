@@ -1,7 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Stack;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -23,7 +23,12 @@ public class Main {
             System.err.println("Error reading the file: " + e.getMessage());
         }
 
-        Stack<Token> tokens = Lexical.run(fileContent);
+        List<Token> tokens = Lexical.run(fileContent);
+
+        // for (Token token : tokens) {
+        //     System.out.println(token);
+        // }
+        
         
         
     }

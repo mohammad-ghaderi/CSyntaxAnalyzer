@@ -1,6 +1,4 @@
-import java.util.Arrays;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public class Lexical {
     private static String buffer;
@@ -16,11 +14,9 @@ public class Lexical {
         "default", "goto", "sizeof", "volatile", "do", "if", "static", "while"
     );
 
-    private static Stack<Token> tokens = new Stack<>();
-
     private static void getChar() {
         if (++pointer == buffer.length()) return;
-        ch = buffer.charAt(++pointer);
+        ch = buffer.charAt(pointer);
     }
 
     private static boolean isLetter() {
@@ -54,14 +50,15 @@ public class Lexical {
         return KEYWORDS.contains(word);
     }
 
-    public static Stack<Token> run(String buffer) {
+    public static List<Token> run(String buffer) {
         Lexical.buffer = buffer;
         state = 0;
         pointer = -1;
         row = 0; col = 0;
-        int len = 0;
+        len = 0;
+        List<Token> tokens = new ArrayList<>();
         Token token;
-        
+
         getChar();
 
         while (pointer < buffer.length()) {
@@ -135,7 +132,7 @@ public class Lexical {
                     if (isKeyword(buffer.substring(pointer - len, pointer))) {
                         token = createToken("Keyword");
                     } else token = createToken("Identifier");
-                    tokens.push(token);
+                    tokens.add(token);
                     reset();
                     break;
             
@@ -178,13 +175,13 @@ public class Lexical {
 
                 case 6:
                     token = createToken("Double Number");
-                    tokens.push(token);
+                    tokens.add(token);
                     reset();
                     break;
 
                 case 7:
                     token = createToken("Integer Number");
-                    tokens.push(token);
+                    tokens.add(token);
                     reset();
                     break;
 
@@ -228,31 +225,31 @@ public class Lexical {
                 
                 case 13:
                     token = createToken("Long Long Number", 2);
-                    tokens.push(token);
+                    tokens.add(token);
                     reset();
                     break;
 
                 case 14:
                     token = createToken("Unsigned Long Long Number", 3);
-                    tokens.push(token);
+                    tokens.add(token);
                     reset();
                     break;
 
                 case 15:
                     token = createToken("Unsigned Integer Number", 1);
-                    tokens.push(token);
+                    tokens.add(token);
                     reset();
                     break;
 
                 case 16:
                     token = createToken("Unsigned Long Number", 2);
-                    tokens.push(token);
+                    tokens.add(token);
                     reset();
                     break;
 
                 case 17:
                     token = createToken("Long Number", 1);
-                    tokens.push(token);
+                    tokens.add(token);
                     reset();
                     break;
                 
@@ -265,13 +262,13 @@ public class Lexical {
 
                 case 19:
                     token = createToken("Float Number", 1);
-                    tokens.push(token);
+                    tokens.add(token);
                     reset();
                     break;
 
                 case 20:
                     token = createToken("Double Number", 2);
-                    tokens.push(token);
+                    tokens.add(token);
                     reset();
                     break;
                 
@@ -303,7 +300,7 @@ public class Lexical {
 
                 case 25:
                     token = createToken("Delimeter");
-                    tokens.push(token);
+                    tokens.add(token);
                     reset();
                     break;
 
@@ -348,7 +345,7 @@ public class Lexical {
                 
                 case 33:
                     token = createToken("Operator");
-                    tokens.push(token);
+                    tokens.add(token);
                     reset();
                     break;
 
@@ -383,13 +380,13 @@ public class Lexical {
 
                 case 38:
                     token = createToken("Character");
-                    tokens.push(token);
+                    tokens.add(token);
                     reset();
                     break;
 
                 case 39:
                     token = createToken("String");
-                    tokens.push(token);
+                    tokens.add(token);
                     reset();
                    break; 
                 default:
