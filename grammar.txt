@@ -43,6 +43,6 @@ WHILE_STMT -> while ( EXP ) STMT
 FOR_STMT -> for ( EXP ; EXP ; EXP ) STMT
 SWITCH_STMT -> switch ( EXP ) { CASE_LIST DEFA }
 CASE_LIST -> case EXP : STMT CASE_LIST
-CASE-LIST -> ''
+CASE_LIST -> ''
 DEFA -> default : STMT
 DEFA -> ''
