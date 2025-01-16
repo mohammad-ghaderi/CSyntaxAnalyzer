@@ -1,7 +1,7 @@
 S' -> S
 S -> type id DECL S
 S -> ''
-DECL -> EXP VAR_REST
+DECL -> = EXP VAR_REST
 DECL -> ( PARAMS ) CMP_STMT
 DECL -> [ EXP ] VAR_REST
 DECL -> , id VAR_REST 
@@ -27,11 +27,13 @@ STMT -> CMP_STMT
 STMT -> return EXP ;
 STMT -> break ;
 EXP -> id IDEXP
-EXP -> number op2 EXP
+EXP -> number NUMEXP
 EXP -> op1 EXP
 IDEXP -> op2 EXP
 IDEXP -> ( ARGS )
 IDEXP -> VAR_REST
+NUMEXP -> op2 EXP
+NUMEXP -> ''
 ARGS -> EXP ARG_REST
 ARGS -> ''
 ARG_REST -> , EXP ARG_REST

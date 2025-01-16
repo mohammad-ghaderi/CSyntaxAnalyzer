@@ -1,8 +1,7 @@
 
 list = []
 
-name = [ 
-    "type", "id", "(", ")", "[", "]", ",", "=", ";", "{", "}", "return", "break", "number", "op2", "op1", "if", "else", "while", "for", "switch", "case", ":", "default", "$", "S'", "S", "DECL", "VAR_REST", "PARAMS", "PAR_REST", "CMP_STMT", "STMT_LIST", "STMT", "EXP", "IDEXP", "ARGS", "ARG_REST", "IF_STMT", "ELSE_STMT", "WHILE_STMT", "FOR_STMT", "SWITCH_STMT", "CASE_LIST", "DEFA" 
+name = [  "type", "id", "=", "(", ")", "[", "]", ",", ";", "{", "}", "return", "break", "number", "op1", "op2", "if", "else", "while", "for", "switch", "case", ":", "default", "$", "S'", "S", "DECL", "VAR_REST", "PARAMS", "PAR_REST", "CMP_STMT", "STMT_LIST", "STMT", "EXP", "IDEXP", "NUMEXP", "ARGS", "ARG_REST", "IF_STMT", "ELSE_STMT", "WHILE_STMT", "FOR_STMT", "SWITCH_STMT", "CASE_LIST", "DEFA",
 ]
 
 inputFile = open("y.html")
@@ -12,7 +11,7 @@ c = -1
 
 row = {}
 
-print("hello")
+print("converting...")
 
 for line in inputFile:
     line = line[:-1]
@@ -41,15 +40,25 @@ inputFile.close()
 
 
 output = open("table.py", 'w') 
+flag = True
 i = 0
 for row in list:
-    output.write(f"actionTable[{i}] = new HashMap<>();\n")
+    table_name = "actionTable"
+    flag = True
+    output.write(f"{table_name}[{i}] = new HashMap<>();\n")
     for item in row:
-        output.write(f'actionTable[{i}].put("{item}", "{row[item]}");\n')
+        if (name.index(item) >= 25 and flag):
+            flag = False
+            table_name = "gotoTable"
+            output.write(f"{table_name}[{i}] = new HashMap<>();\n")
+
+        value = row[item]
+        if (table_name == "actionTable"): value = '"' + value + '"'
+        output.write(f'{table_name}[{i}].put("{item}", {value});\n')
 
     output.write("\n")
     i += 1
 
 output.close()
 
-
+print("done.")

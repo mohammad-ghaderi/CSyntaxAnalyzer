@@ -48,13 +48,14 @@ public class Token {
                 case "~":
                     type = "op1";
                     break;
+                case "=":
+                    type = value;
+                    break;
             
                 default:
                     type = "op2";
                     break;
             }
-        } else if (group.equals("Delimeter")) {
-            type = value;
         } else if (group.equals("Identifier")) {
             type = "id";
         } else if (group.equals("Double Number") || group.equals("Integer Number") || group.equals("Long Long Number") || group.equals("Unsigned Long Long Number") || group.equals("Unsigned Integer Number") || group.equals("Long Number") || group.equals("Float Number") ) {
@@ -62,7 +63,6 @@ public class Token {
         } else {
             type = value;
             // could be developed
-            System.out.println("could not find the type.");
         }
     }
 
